@@ -10,12 +10,16 @@
      <link rel="icon" type="image/png" href="images/favicon.png">
 </head>
 <body>
+    <div class="overlay" id="overlay"></div>
     <header>
         <div class="container">
             <div class="logo">
                 <h1>Lendify</h1>
             </div>
-            <nav>
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="main-nav">
                 <ul>
                     <li><a href="#about">About</a></li>
                     <li><a href="#how-it-works">How It Works</a></li>
@@ -156,7 +160,7 @@
                     <p>Email: info@lendify.io</p>
                    <div class="social-icons">
                     <a class="twitter" href="https://twitter.com/lendify" title="Follow us on Twitter"><i class="fab fa-twitter" aria-hidden="true"></i><span class="sr-only">Twitter</span></a>
-                    <a class="facebook" href="https://facebook.com/lendify" title="Follow us on Facebook"><i class="fab fa-facebook" aria-hidden="true"></i><span class="sr-only">Facebook</span></a>
+                    <a class="facebook" href="https://facebook.com/lendify" title="Follow us on Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i><span class="sr-only">Facebook</span></a>
                     <a class="youtube" href="https://youtube.com/lendify" title="Follow us on YouTube"><i class="fab fa-youtube" aria-hidden="true"></i><span class="sr-only">YouTube</span></a>
                     <a class="instagram" href="https://instagram.com/lendify" title="Follow us on Instagram"><i class="fab fa-instagram" aria-hidden="true"></i><span class="sr-only">Instagram</span></a>
                 </div>
@@ -169,5 +173,41 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Add this script for the hamburger menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+            const mainNav = document.getElementById('main-nav');
+            const overlay = document.getElementById('overlay');
+            const navLinks = mainNav.querySelectorAll('a');
+            
+            function toggleNav() {
+                mainNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                // Toggle icon between bars and times
+                const icon = mobileNavToggle.querySelector('i');
+                if (icon.classList.contains('fa-bars')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+            
+            mobileNavToggle.addEventListener('click', toggleNav);
+            overlay.addEventListener('click', toggleNav);
+            
+            // Close menu when a link is clicked
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (mainNav.classList.contains('active')) {
+                        toggleNav();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

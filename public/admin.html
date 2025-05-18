@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-     <link rel="icon" type="image/png" href="images/favicon.png">
     <style>
         .admin-panel {
             max-width: 1000px;
@@ -118,7 +117,7 @@
             background-color: #6c757d;
             color: white;
             padding: 12px 24px;
-            border-radius: 50px;
+                       border-radius: 50px;
             font-weight: 500;
             transition: all 0.3s ease;
             border: none;
@@ -168,6 +167,68 @@
         }
         .center-text {
             text-align: center;
+        }
+        
+        /* Responsive styles for admin panel */
+        @media (max-width: 768px) {
+            .admin-panel {
+                margin: 60px auto 20px;
+                padding: 20px;
+            }
+            
+            .admin-header h1 {
+                font-size: 24px;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-card h3 {
+                font-size: 14px;
+            }
+            
+            .stat-card .stat-value {
+                font-size: 24px;
+            }
+            
+            .admin-card {
+                padding: 15px;
+            }
+            
+            .admin-card h2 {
+                font-size: 18px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-primary, .btn-secondary, .btn-danger {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .password-form {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .password-form input {
+                width: 100%;
+            }
+            
+            .subscriber-list th, .subscriber-list td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -269,9 +330,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // No hardcoded password!
-            let adminPasswordValue = '';
-
+            const adminPassword = 'lendify-admin'; // Change this to a secure password
+            
             // DOM Elements
             const passwordInput = document.getElementById('admin-password');
             const loginBtn = document.getElementById('login-btn');
@@ -297,40 +357,24 @@
             const subscriberCountSpan = document.getElementById('subscriber-count');
             
             // Check if already logged in
-            if (localStorage.getItem('lendifyAdminLoggedIn') === 'true' && localStorage.getItem('lendifyAdminPassword')) {
-                adminPasswordValue = localStorage.getItem('lendifyAdminPassword');
+            if (localStorage.getItem('lendifyAdminLoggedIn') === 'true') {
                 showAdminPanel();
             }
             
             // Login functionality
             loginBtn.addEventListener('click', function() {
-                const enteredPassword = passwordInput.value;
-                // Try to access a protected endpoint with the entered password
-                fetch('/api/admin/subscriber-count', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: enteredPassword })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.count !== undefined) {
-                        localStorage.setItem('lendifyAdminLoggedIn', 'true');
-                        localStorage.setItem('lendifyAdminPassword', enteredPassword);
-                        adminPasswordValue = enteredPassword;
-                        showAdminPanel();
-                        passwordInput.value = '';
-                    } else {
-                        showMessage('Incorrect password', 'error');
-                    }
-                })
-                .catch(() => showMessage('Server error', 'error'));
+                if (passwordInput.value === adminPassword) {
+                    localStorage.setItem('lendifyAdminLoggedIn', 'true');
+                    showAdminPanel();
+                    passwordInput.value = '';
+                } else {
+                    showMessage('Incorrect password', 'error');
+                }
             });
             
             // Logout functionality
             logoutBtn.addEventListener('click', function() {
                 localStorage.removeItem('lendifyAdminLoggedIn');
-                localStorage.removeItem('lendifyAdminPassword');
-                adminPasswordValue = '';
                 adminContent.classList.add('hidden');
                 logoutContainer.classList.add('hidden');
                 loginSection.style.display = 'block';
@@ -345,7 +389,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ password: adminPasswordValue }),
+                        body: JSON.stringify({ password: adminPassword }),
                     })
                     .then(response => response.json())
                     .then(data => {
@@ -382,7 +426,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ password: adminPasswordValue }),
+                    body: JSON.stringify({ password: adminPassword }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -425,13 +469,14 @@
                 if (!confirm('Are you sure you want to send this email to all subscribers?')) {
                     return;
                 }
+                
                 fetch('/api/admin/send-email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ 
-                        password: adminPasswordValue,
+                        password: adminPassword,
                         subject: subject,
                         content: content
                     }),
@@ -487,7 +532,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ password: adminPasswordValue }),
+                    body: JSON.stringify({ password: adminPassword }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -503,8 +548,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ password: adminPasswordValue }),
+                    },                     body: JSON.stringify({ password: adminPassword }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -546,7 +590,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ password: adminPasswordValue }),
+                    body: JSON.stringify({ password: adminPassword }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -615,3 +659,4 @@
     </script>
 </body>
 </html>
+
